@@ -16,9 +16,7 @@ class SensorMethod(Enum):
     REBOOT = "reboot"
 
 
-def make_valid_payload(
-    method: SensorMethod, params: dict | None = None
-) -> dict:
+def make_valid_payload(method: SensorMethod, params: dict | None = None) -> dict:
     payload = {"method": method, "jsonrpc": "2.0", "id": 1}
 
     if params:
@@ -30,7 +28,9 @@ def make_valid_payload(
 def wait(func: Callable, condition: Callable, tries: int, timeout: int, **kwargs):
     for i in range(tries):
         try:
-            print(f"Calling function {func.__name__} with args {kwargs} - attempt {i + 1}")
+            print(
+                f"Calling function {func.__name__} with args {kwargs} - attempt {i + 1}"
+            )
             result = func(**kwargs)
 
             print(f"Evaluating result of the call with function {condition.__name__}")
@@ -56,9 +56,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--sensor-port", action="store", default="9898", help="Sensor port"
     )
-    parser.addoption(
-        "--sensor-pin", action="store", default="0000", help="Sensor pin"
-    )
+    parser.addoption("--sensor-pin", action="store", default="0000", help="Sensor pin")
 
 
 @pytest.fixture(scope="session")
@@ -190,6 +188,8 @@ def reboot_sensor(make_valid_request):
 def setup_test_session(reset_sensor_to_factory, get_sensor_info):
     print("Resetting sensor to factory settings before test session")
     reset_sensor_to_factory()
-    sensor_info = wait(get_sensor_info, lambda x: isinstance(x, dict), tries=15, timeout=1)
+    sensor_info = wait(
+        get_sensor_info, lambda x: isinstance(x, dict), tries=15, timeout=1
+    )
     if not sensor_info:
         raise RuntimeError("Sensor didn't reset to factory property")
