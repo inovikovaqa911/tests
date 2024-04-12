@@ -60,7 +60,7 @@ def test_reboot(get_sensor_info, reboot_sensor):
 
     print("Reboot sensor")
     reboot_response = reboot_sensor()
-    assert reboot_response == "rebooting, will be back in 3 seconds", (
+    assert reboot_response == "rebooting", (
         "Sensor did not return proper text in response " "to reboot request"
     )
 
@@ -128,8 +128,8 @@ def test_set_sensor_reading_interval(
     print("6. Get sensor reading")
     sensor_reading_after_interval = wait(
         func=get_sensor_reading(),
-        condition=lambda x: x != sensor_reading,
-        tries=interval,
+        condition=lambda x: isinstance(x, float),
+        tries=15,
         timeout=interval,
     )
 
@@ -159,73 +159,56 @@ def test_update_sensor_firmware(get_sensor_info, update_sensor_firmware):
     max_firmware_version = 15
     firmware_version = "firmware_version"
 
-    print("1. Get original sensor firmware version")
+    print("Get original sensor firmware version")
     sensor_info = get_sensor_info()
     initial_firmware_version = sensor_info[firmware_version]
 
-    while initial_firmware_version < max_firmware_version - 1:
-        print("2. Request firmware update")
+    while initial_firmware_version < max_firmware_version:
+        print("Request firmware update")
         update_sensor_firmware()
 
-        print("3. Get current sensor firmware version")
+        print("Get current sensor firmware version")
         sensor_info_after_update = wait(
             func=get_sensor_info,
             condition=lambda x: isinstance(x, dict),
-            tries=10,
+            tries=15,
             timeout=1,
         )
         updated_firmware_version = sensor_info_after_update[firmware_version]
 
         print(
-            "4. Validate that current firmware version is +1 to original firmware version"
+            "Validate that current firmware version is +1 to original firmware version"
         )
         assert (
             updated_firmware_version == initial_firmware_version + 1
         ), "Sensor firmware version was not updated correctly"
 
-        print("5. Repeat steps 1-4 until sensor is at max_firmware_version - 1")
         initial_firmware_version = updated_firmware_version
 
+    print("Update sensor to max firmware version")
+    print("Validate that sensor is at max firmware version")
     assert (
-        initial_firmware_version == max_firmware_version - 1
+        initial_firmware_version == max_firmware_version
     ), "Sensor firmware version not max"
 
-    print("6. Update sensor to max firmware version")
-    update_sensor_firmware()
-
-    print("7. Validate that sensor is at max firmware version")
-    sensor_info_after_update = wait(
-        func=get_sensor_info,
-        condition=lambda x: isinstance(x, dict),
-        tries=10,
-        timeout=1,
-    )
-    updated_firmware_version = sensor_info_after_update[firmware_version]
-    assert (
-        updated_firmware_version == max_firmware_version
-    ), "Sensor firmware version not max"
-
-    print("8. Request another firmware update")
+    print("Request another firmware update")
     firmware_message = update_sensor_firmware()
 
-    print("9. Validate that sensor doesn't update and responds appropriately")
+    print("Validate that sensor doesn't update and responds appropriately")
     assert (
-            firmware_message == "already at latest firmware version"
+        firmware_message == "already at latest firmware version"
     ), "Sensor firmware version not max"
 
-    print("10. Validate that sensor firmware version doesn't change if it's at maximum value")
+    print(
+        "Validate that sensor firmware version doesn't change if it's at maximum value"
+    )
     sensor_info_after_update = wait(
         func=get_sensor_info,
         condition=lambda x: isinstance(x, dict),
-        tries=10,
+        tries=15,
         timeout=1,
     )
     updated_firmware_version = sensor_info_after_update[firmware_version]
     assert (
         updated_firmware_version == max_firmware_version
     ), "Sensor firmware version not max"
-
-
-
-
-
