@@ -156,18 +156,19 @@ def test_update_sensor_firmware(get_sensor_info, update_sensor_firmware):
     10. Validate that sensor firmware version doesn't change if it's at maximum value.
     """
 
-    max_firmware_version = 15
     firmware_version = "firmware_version"
+    max_firmware_version = 15
+    current_firmware_version = 0
 
-    print("Get original sensor firmware version")
-    sensor_info = get_sensor_info()
-    initial_firmware_version = sensor_info[firmware_version]
+    while current_firmware_version != max_firmware_version:
+        print("1. Get current sensor firmware version")
+        sensor_info = get_sensor_info()
+        current_firmware_version = sensor_info[firmware_version]
 
-    while initial_firmware_version < max_firmware_version:
-        print("Request firmware update")
+        print("2. Request firmware update")
         update_sensor_firmware()
 
-        print("Get current sensor firmware version")
+        print("3. Get current sensor firmware version after update")
         sensor_info_after_update = wait(
             func=get_sensor_info,
             condition=lambda x: isinstance(x, dict),
@@ -177,38 +178,40 @@ def test_update_sensor_firmware(get_sensor_info, update_sensor_firmware):
         updated_firmware_version = sensor_info_after_update[firmware_version]
 
         print(
-            "Validate that current firmware version is +1 to original firmware version"
+            "4. Validate that current firmware version is +1 to original firmware version"
         )
+
         assert (
-            updated_firmware_version == initial_firmware_version + 1
+                updated_firmware_version == current_firmware_version + 1
         ), "Sensor firmware version was not updated correctly"
 
-        initial_firmware_version = updated_firmware_version
+        current_firmware_version = updated_firmware_version
 
-    print("Update sensor to max firmware version")
-    print("Validate that sensor is at max firmware version")
+        if current_firmware_version == max_firmware_version:
+            print(
+                "6. Update sensor to max firmware version")
+            break
+        print("5. Repeat steps 1-4 until sensor is at max_firmware_version - 1")
+
+    print("7. Validate that sensor is at max firmware version")
     assert (
-        initial_firmware_version == max_firmware_version
+            current_firmware_version == max_firmware_version
     ), "Sensor firmware version not max"
 
-    print("Request another firmware update")
-    firmware_message = update_sensor_firmware()
+    print("8. Request another firmware update")
+    response_to_firmware_update_request = update_sensor_firmware()
 
-    print("Validate that sensor doesn't update and responds appropriately")
+    print("9. Validate that sensor doesn't update and responds appropriately")
     assert (
-        firmware_message == "already at latest firmware version"
+            response_to_firmware_update_request == "already at latest firmware version"
     ), "Sensor firmware version not max"
 
     print(
-        "Validate that sensor firmware version doesn't change if it's at maximum value"
+        "10. Validate that sensor firmware version doesn't change if it's at maximum value"
     )
-    sensor_info_after_update = wait(
-        func=get_sensor_info,
-        condition=lambda x: isinstance(x, dict),
-        tries=15,
-        timeout=1,
-    )
-    updated_firmware_version = sensor_info_after_update[firmware_version]
+    sensor_info_after_update = get_sensor_info()
+    current_firmware_version = sensor_info_after_update[firmware_version]
     assert (
-        updated_firmware_version == max_firmware_version
+            current_firmware_version == max_firmware_version
     ), "Sensor firmware version not max"
+
