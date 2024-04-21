@@ -9,20 +9,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-# class SensorInfo:
-#    def __init__(self, name: str, hid: str, model: str, firmware_version: int, reading_interval: float):
-#        if not isinstance(name, str):
-#            raise TypeError("'name' should be a string")
-#        if name == "":
-#            raise ValueError("'name' should not be an empty string")
-#        self.name = name
-
-#        self.hid = hid
-#        self.model = model
-#        self.firmware_version = firmware_version
-#        self.reading_interval = reading_interval
-
-
 @dataclass
 class SensorInfo:
     name: str
@@ -46,12 +32,12 @@ class SensorInfo:
             raise ValueError("'model' should not be an empty string")
         if not isinstance(self.firmware_version, int):
             raise TypeError("'firmware_version' should be an int")
-        if self.firmware_version <= 0:
-            raise ValueError("'firmware_version' should be a positive int")
+        if not 10 <= self.firmware_version <= 15:
+            raise ValueError("'firmware_version' should be between 10 and 15 inclusive")
         if not isinstance(self.reading_interval, int):
             raise TypeError("'reading_interval' should be a int")
-        if self.reading_interval <= 0:
-            raise ValueError("'reading_interval' should be a positive int")
+        if not self.reading_interval > 0:
+            raise ValueError("'reading_interval' should be greater than 0")
 
 
 class SensorMethod(Enum):
