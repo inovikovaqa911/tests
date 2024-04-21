@@ -4,16 +4,8 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def test_sanity(
-    get_sensor_info,
-    get_sensor_reading,
-    get_sensor_methods,
-    set_sensor_name,
-    set_sensor_reading_interval,
-    reset_sensor_to_factory,
-    update_sensor_firmware,
-    reboot_sensor,
-):
+def test_sanity(get_sensor_info, get_sensor_reading):
+
     sensor_info = get_sensor_info()
 
     sensor_name = sensor_info.name
