@@ -114,10 +114,10 @@ def sensor_pin(request):
 @pytest.fixture(scope="session")
 def send_post(sensor_host, sensor_port, sensor_pin):
     def _send_post(
-        method: SensorMethod | None = None,
-        params: dict | None = None,
-        jsonrpc: str | None = None,
-        id: int | None = None,
+            method: SensorMethod | None = None,
+            params: dict | None = None,
+            jsonrpc: str | None = None,
+            id: int | None = None,
     ):
         request_body = {}
 
@@ -150,7 +150,7 @@ def make_valid_request(send_post):
     def _make_valid_request(method: SensorMethod, params: dict | None = None) -> dict:
         payload = make_valid_payload(method=method, params=params)
         sensor_response = send_post(**payload)
-        return sensor_response.get("result", {})
+        return sensor_response.get("result", "error")
 
     return _make_valid_request
 
@@ -254,7 +254,7 @@ def factory_sensor_settings(reset_sensor_to_factory):
 
 @pytest.fixture(autouse=True)
 def ensure_sensor_factory_settings(
-    factory_sensor_settings, reset_sensor_to_factory, get_sensor_info
+        factory_sensor_settings, reset_sensor_to_factory, get_sensor_info
 ):
     current_sensor_settings = get_sensor_info()
     log.info("Ensure sensor has factory settings before starting test")
