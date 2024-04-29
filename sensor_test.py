@@ -205,35 +205,6 @@ def test_update_sensor_firmware(get_sensor_info, update_sensor_firmware):
     ), "Sensor firmware version not max"
 
 
-def test_set_invalid_sensor_reading_interval(get_sensor_info, set_sensor_reading_interval):
-    """
-    Test Steps:
-        1. Get original sensor reading interval.
-        2. Set interval to < 1
-        3. Validate that sensor responds with an error.
-        4. Get current sensor reading interval.
-        5. Validate that sensor reading interval didn't change.
-    """
-
-    log.info("1. Get original sensor reading interval")
-    sensor_info = get_sensor_info()
-    original_interval = sensor_info.reading_interval
-
-    log.info("2. Set interval to < 1")
-    invalid_interval = 0
-    response_to_invalid_interval = set_sensor_reading_interval(invalid_interval)
-
-    log.info("3. Validate that sensor responds with an error")
-    assert response_to_invalid_interval == "error", "Sensor didn't respond with an error"
-
-    log.info("4. Get current sensor reading interval")
-    sensor_info_after_invalid_interval = get_sensor_info()
-    current_interval = sensor_info_after_invalid_interval.reading_interval
-
-    log.info("5. Validate that sensor reading interval didn't change")
-    assert current_interval == original_interval, "Sensor reading interval changed when it shouldn't have"
-
-
 def test_set_empty_sensor_name(get_sensor_info, set_sensor_name):
     """
     Test Steps:
@@ -261,4 +232,33 @@ def test_set_empty_sensor_name(get_sensor_info, set_sensor_name):
 
     log.info("5. Validate that sensor name didn't change")
     assert current_name == original_name, "Sensor name changed when it shouldn't have"
+
+
+def test_set_invalid_sensor_reading_interval(get_sensor_info, set_sensor_reading_interval):
+    """
+    Test Steps:
+        1. Get original sensor reading interval.
+        2. Set interval to < 1
+        3. Validate that sensor responds with an error.
+        4. Get current sensor reading interval.
+        5. Validate that sensor reading interval didn't change.
+    """
+
+    log.info("1. Get original sensor reading interval")
+    sensor_info = get_sensor_info()
+    original_interval = sensor_info.reading_interval
+
+    log.info("2. Set interval to < 1")
+    invalid_interval = 0
+    response_to_invalid_interval = set_sensor_reading_interval(invalid_interval)
+
+    log.info("3. Validate that sensor responds with an error")
+    assert response_to_invalid_interval == "error", "Sensor didn't respond with an error"
+
+    log.info("4. Get current sensor reading interval")
+    sensor_info_after_invalid_interval = get_sensor_info()
+    current_interval = sensor_info_after_invalid_interval.reading_interval
+
+    log.info("5. Validate that sensor reading interval didn't change")
+    assert current_interval == original_interval, "Sensor reading interval changed when it shouldn't have"
 
