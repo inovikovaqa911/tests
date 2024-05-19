@@ -224,7 +224,7 @@ def test_set_empty_sensor_name(get_sensor_info, set_sensor_name):
     response_to_empty_name = set_sensor_name(empty_name)
 
     log.info("3. Validate that sensor responds with an error")
-    assert response_to_empty_name == "error", "Sensor didn't respond with an error"
+    assert response_to_empty_name == {}, "Sensor didn't respond with an error"
 
     log.info("4. Get current sensor name")
     sensor_info_after_empty_name = get_sensor_info()
@@ -253,7 +253,7 @@ def test_set_invalid_sensor_reading_interval(get_sensor_info, set_sensor_reading
     response_to_invalid_interval = set_sensor_reading_interval(invalid_interval)
 
     log.info("3. Validate that sensor responds with an error")
-    assert response_to_invalid_interval == "error", "Sensor didn't respond with an error"
+    assert response_to_invalid_interval == {}, "Sensor didn't respond with an error"
 
     log.info("4. Get current sensor reading interval")
     sensor_info_after_invalid_interval = get_sensor_info()
